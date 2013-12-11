@@ -1,0 +1,13 @@
+{
+  "name": "databases",
+  "version": "0.0.0",
+  "description": "SQL Database for chat server",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dannynelson/2013-11-databases.git"
+  },
+  "author": "dannynelson and sarchila",
+  "dependencies": {
+    "request": "~2.29.0"
+  }
+}
