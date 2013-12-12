@@ -9,7 +9,6 @@ var headers = {
   "content-type": "application/json"
 };
 
-var statusCode = 200;
 var timeStamp = new Date().toISOString();
 
 var addServerProperties = function(msg){
@@ -17,8 +16,9 @@ var addServerProperties = function(msg){
 };
 
 var sendChats = function(req, res){
-  statusCode = 200;
-  sendResponse(req, res);
+
+  var chatPayload = getFromDb(params);
+  sendResponse(req, res, 200, chatPayload);
 };
 
 var addChat = function(req, res){
@@ -34,18 +34,28 @@ var addChat = function(req, res){
     console.log(message);
     sendToDb(message);
 
-    statusCode = 201;
-    sendResponse(req, res);
+    sendResponse(req, res, 201);
   });
 };
 
 var sendOptions = function(req, res){
-  sendResponse(req, res);
+  sendResponse(req, res, 200);
 };
 
-var sendResponse = function(req, res){
+var sendResponse = function(req, res, statusCode, body){
+  body = body || null;
   res.writeHead(statusCode, headers);
-  res.end(null);
+  res.end(body);
+};
+
+var getFromDb = function(){
+  var messages;
+  db.dbConnection.query('SELECT * FROM messages', function(err, result) {
+    if (err) console.log(err);
+    messages = result;
+    // TODO: move sendResponse to here
+  });
+  return messages;
 };
 
 var sendToDb = function(message){
@@ -67,8 +77,7 @@ exports.handleRequest = function(req, res) {
   if (verbs[req.method]){
     verbs[req.method](req, res);
   } else {
-    statusCode = 405;
-    sendResponse(req, res);
+    sendResponse(req, res, 405);
   }
 
 };
