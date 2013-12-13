@@ -23,8 +23,8 @@ window.Chat = Backbone.Model.extend({
         console.log('chatterbox: Message sent');
         self.trigger('chat:sent');
       },
-      error: function (data) {
-        console.error('chatterbox: Failed to send message');
+      error: function (data, textStatus, errorThrown) {
+        console.error('chatterbox: Failed to send message ', data, textStatus, errorThrown);
       }
     });
   }

@@ -16,9 +16,11 @@ var addServerProperties = function(msg){
 };
 
 var sendChats = function(req, res){
-
-  var chatPayload = getFromDb(params);
-  sendResponse(req, res, 200, chatPayload);
+  db.dbConnection.query('SELECT * FROM messages', function(err, result) {
+    if (err) console.log(err);
+    // TODO: move sendResponse to here
+    sendResponse(req, res, 200, JSON.stringify(result));
+  });
 };
 
 var addChat = function(req, res){
@@ -27,14 +29,12 @@ var addChat = function(req, res){
     body += data;
   });
   req.on('end', function () {
-    var message = qs.parse(body);
     // var message = JSON.parse(body);
-
+    var message = (body[0] === '{') ? JSON.parse(body): qs.parse(body);
     //process and validate
-    console.log(message);
     sendToDb(message);
 
-    sendResponse(req, res, 201);
+    sendResponse(req, res, 201, JSON.stringify(message));
   });
 };
 
@@ -43,19 +43,9 @@ var sendOptions = function(req, res){
 };
 
 var sendResponse = function(req, res, statusCode, body){
-  body = body || null;
+  body = body || '{}';
   res.writeHead(statusCode, headers);
   res.end(body);
-};
-
-var getFromDb = function(){
-  var messages;
-  db.dbConnection.query('SELECT * FROM messages', function(err, result) {
-    if (err) console.log(err);
-    messages = result;
-    // TODO: move sendResponse to here
-  });
-  return messages;
 };
 
 var sendToDb = function(message){
