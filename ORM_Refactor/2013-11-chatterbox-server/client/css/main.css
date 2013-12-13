@@ -1,0 +1,10 @@
+.container {
+  width: 700px;
+}
+.username {
+  color: blue;
+}
+.roomInfo {
+  color: gray;
+  font-size: 10px;
+}
