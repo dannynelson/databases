@@ -1,21 +1,14 @@
 var mysql = require('mysql');
-/* If the node mysql module is not found on your system, you may
- * need to do an "sudo npm install -g mysql". */
+var Sequelize = require('sequelize');
 
-/* You'll need to fill the following out with your mysql username and password.
- * database: "chat" specifies that we're using the database called
- * "chat", which we created by running schema.sql.*/
-exports.dbConnection = mysql.createConnection({
-  user: "DNSA",
-  password: "4321",
-  database: "chat"
+var sequelize = new Sequelize('chat', 'DNSA', '4321');
+
+exports.Messages = sequelize.define('Messages', {
+  username: Sequelize.STRING(20),
+  text: Sequelize.STRING(160),
+  // createdAt: Sequelize.DATE,
+  // updatedAt: Sequelize.DATE,
+  roomname: Sequelize.STRING(20)
 });
 
-exports.dbConnection.connect()
-/* Now you can make queries to the Mysql database using the
- * dbConnection.query() method.
- * See https://github.com/felixge/node-mysql for more details about
- * using this module.*/
-
-/* You already know how to create an http server from the previous
- * assignment; you can re-use most of that code here. */
+exports.Messages.sync({force:true});

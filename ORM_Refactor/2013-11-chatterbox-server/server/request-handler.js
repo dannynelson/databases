@@ -1,4 +1,4 @@
-var db = require('../../ORM_Refactor/persistent_server');
+var db = require('../../persistent_server');
 var qs = require('querystring');
 
 var headers = {
@@ -9,17 +9,10 @@ var headers = {
   "content-type": "application/json"
 };
 
-var timeStamp = new Date().toISOString();
-
-var addServerProperties = function(msg){
-  msg.updatedAt = msg.createdAt = new Date().toISOString();
-};
-
 var sendChats = function(req, res){
-  db.dbConnection.query('SELECT * FROM messages', function(err, result) {
-    if (err) console.log(err);
-    // TODO: move sendResponse to here
-    sendResponse(req, res, 200, JSON.stringify(result));
+  // console.log('DEBUG:', db.Messages)
+  db.Messages.findAll().success(function(msgs){
+    sendResponse(req, res, 200, JSON.stringify(msgs));
   });
 };
 
@@ -49,11 +42,11 @@ var sendResponse = function(req, res, statusCode, body){
 };
 
 var sendToDb = function(message){
-  addServerProperties(message);
-  db.dbConnection.query('INSERT INTO messages SET ?', message, function(err, result) {
-    if (err) console.log(err);
+  var newMessage = db.Messages.build(message);
+  newMessage.save().success(function(){
+    console.log("Message successfully posted to SQL database");
   });
-}
+};
 
 
 var verbs = {
